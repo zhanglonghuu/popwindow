@@ -27,8 +27,8 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     // Get current window position first
     browser.windows.get(tab.windowId).then((currentWindow) => {
       // Define the size of the new window
-      const windowWidth = 1200;
-      const windowHeight = 900;
+      const windowWidth = currentWindow.width*3/4;
+      const windowHeight = currentWindow.height*3/4;
 
       // Calculate position relative to current window
       const left = Math.max(0, currentWindow.left + 
