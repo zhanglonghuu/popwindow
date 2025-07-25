@@ -1,4 +1,7 @@
-browser.contextMenus.create({
+// Cross-browser compatibility
+const browserAPI = chrome || browser;
+
+browserAPI.contextMenus.create({
   id: "open-url-popup",
   title: "Open in Small Popup",
   contexts: ["all"],
@@ -8,7 +11,7 @@ browser.contextMenus.create({
   }
 });
 
-browser.contextMenus.onClicked.addListener((info, tab) => {
+browserAPI.contextMenus.onClicked.addListener((info, tab) => {
   let targetUrl = null;
 
   // Priority 1: link URL
@@ -25,7 +28,9 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 
   if (targetUrl) {
     // Get current window position first
-    browser.windows.get(tab.windowId).then((currentWindow) => {
+    browserAPI.windows.get(tab.windowId, windowInfo => {
+      const currentWindow = windowInfo;
+      
       // Define the size of the new window
       const windowWidth = currentWindow.width*3/4;
       const windowHeight = currentWindow.height*3/4;
@@ -37,13 +42,13 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
                         Math.round((currentWindow.height - windowHeight) / 2));
 
       // Create the centered window relative to current window
-      browser.windows.create({
+      browserAPI.windows.create({
         url: targetUrl,
         type: "popup",
-        width: windowWidth,
-        height: windowHeight,
-        top: top,
-        left: left
+        width: Math.round(windowWidth),
+        height: Math.round(windowHeight),
+        top: Math.round(top),
+        left: Math.round(left)
       });
     });
   }
