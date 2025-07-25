@@ -1,11 +1,11 @@
 browser.contextMenus.create({
-    id: "open-url-popup",
-    title: "Open in Small Popup",
-    contexts: ["all"],
-    icons: {
-        "16": "/icons/icon.svg",  // Make sure to include the leading slash
-        "32": "/icons/icon.svg"
-    }
+  id: "open-url-popup",
+  title: "Open in Small Popup",
+  contexts: ["all"],
+  icons: {
+    "16": "/icons/icon.svg",  // Make sure to include the leading slash
+    "32": "/icons/icon.svg"
+  }
 });
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
@@ -15,7 +15,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
   if (info.linkUrl) {
     targetUrl = info.linkUrl;
 
-  // Priority 2: selected text
+    // Priority 2: selected text
   } else if (info.selectionText) {
     const raw = info.selectionText.trim();
 
@@ -25,14 +25,25 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 
   if (targetUrl) {
     // Get current window position first
-    browser.windows.get(tab.windowId).then(currentWindow => {
+    browser.windows.get(tab.windowId).then((currentWindow) => {
+      // Define the size of the new window
+      const windowWidth = 1200;
+      const windowHeight = 900;
+
+      // Calculate position relative to current window
+      const left = Math.max(0, currentWindow.left + 
+                          Math.round((currentWindow.width - windowWidth) / 2));
+      const top = Math.max(0, currentWindow.top + 
+                        Math.round((currentWindow.height - windowHeight) / 2));
+
+      // Create the centered window relative to current window
       browser.windows.create({
         url: targetUrl,
         type: "popup",
-        width: 1200,
-        height: 900,
-        top: currentWindow.top + 50,    // Offset from parent window
-        left: currentWindow.left + 50   // Offset from parent window
+        width: windowWidth,
+        height: windowHeight,
+        top: top,
+        left: left
       });
     });
   }
