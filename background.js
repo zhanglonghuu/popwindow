@@ -1,15 +1,28 @@
-// Cross-browser compatibility
-const browserAPI = chrome || browser;
+// Cross-browser compatibility for MV3
+const browserAPI = typeof chrome !== 'undefined' ? chrome : browser;
 
-browserAPI.contextMenus.create({
-  id: "open-url-popup",
-  title: "Open in Small Popup",
-  contexts: ["all"],
-  icons: {
-    "16": "/icons/icon.svg",  // Make sure to include the leading slash
-    "32": "/icons/icon.svg"
-  }
+// Create context menu on startup for MV3
+browserAPI.runtime.onStartup.addListener(() => {
+  createContextMenu();
 });
+
+browserAPI.runtime.onInstalled.addListener(() => {
+  createContextMenu();
+});
+
+function createContextMenu() {
+  browserAPI.contextMenus.removeAll(() => {
+    browserAPI.contextMenus.create({
+      id: "open-url-popup",
+      title: "Open in Small Popup",
+      contexts: ["all"]
+    }, () => {
+      if (browserAPI.runtime.lastError) {
+        console.error('Error creating context menu:', browserAPI.runtime.lastError);
+      }
+    });
+  });
+}
 
 browserAPI.contextMenus.onClicked.addListener((info, tab) => {
   let targetUrl = null;
