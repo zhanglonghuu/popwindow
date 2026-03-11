@@ -67,5 +67,37 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
+// Listen for messages from content script to open links in new popup windows
+browserAPI.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'openInPopup') {
+    const url = request.url;
+    
+    // Get the current window that contains the sender tab
+    browserAPI.windows.get(sender.tab.windowId, (currentWindow) => {
+      // Use the same size as the current window
+      const windowWidth = currentWindow.width;
+      const windowHeight = currentWindow.height;
+      
+      // Offset new window slightly from current position
+      const left = Math.max(0, currentWindow.left + 20);
+      const top = Math.max(0, currentWindow.top + 20);
+      
+      // Create new popup window with the same size
+      browserAPI.windows.create({
+        url: url,
+        type: "popup",
+        width: Math.round(windowWidth),
+        height: Math.round(windowHeight),
+        top: Math.round(top),
+        left: Math.round(left)
+      });
+      
+      sendResponse({ success: true });
+    });
+    
+    return true; // Keep the message channel open for async response
+  }
+});
+
 
 
