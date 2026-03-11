@@ -40,6 +40,10 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
   }
 
   if (targetUrl) {
+    // Add isPopup parameter to mark this as a popup window
+    const separator = targetUrl.includes('?') ? '&' : '?';
+    const urlWithPopupMarker = `${targetUrl}${separator}isPopup=true`;
+    
     // Get current window position first
     browserAPI.windows.get(tab.windowId, windowInfo => {
       const currentWindow = windowInfo;
@@ -56,7 +60,7 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
 
       // Create the centered window relative to current window
       browserAPI.windows.create({
-        url: targetUrl,
+        url: urlWithPopupMarker,
         type: "popup",
         width: Math.round(windowWidth),
         height: Math.round(windowHeight),
@@ -70,7 +74,11 @@ browserAPI.contextMenus.onClicked.addListener((info, tab) => {
 // Listen for messages from content script to open links in new popup windows
 browserAPI.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'openInPopup') {
-    const url = request.url;
+    let url = request.url;
+    
+    // Add isPopup parameter to mark this as a popup window
+    const separator = url.includes('?') ? '&' : '?';
+    url = `${url}${separator}isPopup=true`;
     
     // Get the current window that contains the sender tab
     browserAPI.windows.get(sender.tab.windowId, (currentWindow) => {
