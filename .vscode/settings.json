@@ -1,0 +1,35 @@
+{
+    "commentTranslate.targetLanguage": "zh-CN",
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell"
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [],
+            "icon": "terminal-cmd"
+        },
+        "Git Bash": {
+            "source": "Git Bash"
+        },
+        "git bash": {
+            "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+            "args": []
+        },
+        "Cygwin": {
+            "path": "C:\\cygwin64\\bin\\bash.exe",
+            "args": [
+                "--login"
+            ],
+            "env": {
+                "CHERE_INVOKING": "1"
+            }
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "Cygwin",
+    "claudeCodeChat.permissions.yoloMode": true,
+}
